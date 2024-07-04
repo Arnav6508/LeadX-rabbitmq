@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: rabbitmq
+    env: ubuntu
+    plan: free
+    buildCommand: |
+      sudo apt-get update
+      sudo apt-get install -y curl gnupg apt-transport-https
+      curl -fsSL https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey | sudo apt-key add -
+      sudo tee /etc/apt/sources.list.d/bintray.rabbitmq.list <<EOF
+      deb https://dl.bintray.com/rabbitmq/debian $(lsb_release -cs) main
+      EOF
+      sudo apt-get update
+      sudo apt-get install -y rabbitmq-server
+    startCommand: sudo service rabbitmq-server start
+    envVars:
+      - key: RENDER_EXTERNAL_HOSTNAME
+        value: https://psi-leadx-rabbitmq.onrender.com
+    healthCheckPath: /
+    port: 15672
